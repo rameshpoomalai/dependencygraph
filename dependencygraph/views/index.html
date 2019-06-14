@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Document Finder</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="stylesheet" href="/style/style.css" />
+
+	<link rel="stylesheet" href="/style/vis-network.min.css" />
+
+	<script type="text/javascript" src="/scripts/util.js"></script>
+	<script type="text/javascript" src="/scripts/index.js"></script>
+	<script type="text/javascript" src="/scripts/vis.js"></script>
+	<style type="text/css">
+		#container{
+				width: 1000px;
+				height: 400px;
+				border: 1px solid lightgray;
+		}
+
+		td {
+				vertical-align:top;
+		}
+		table {
+				width:800px;
+		}
+</style>
+</head>
+<body onload="loadItems()">
+
+<div  id="filter">
+Filter by Namespace :
+<select id="selectNameSpace" name="selectNameSpace" onchange="loadItems()">
+</select>
+</div>
+<div id="loadingImage" style="display:block"></div>
+<div class = "container" id="myImage"></div>
+
+
+</body>
+</html>

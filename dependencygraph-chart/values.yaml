@@ -1,0 +1,33 @@
+# Default values for bluecompute-web.
+replicaCount: 1
+image:
+  repository: rameshpoomalai
+  tag: v5
+  pullPolicy: Always
+service:
+  name: dependencygraph
+  type: NodePort
+  externalPort: 3000
+  internalPort: 3000
+  nodeport: 30101
+  port:
+ingress:
+  hostname:
+  path: /
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+global:
+  bluemix:
+    apiKey:
+
+    target:
+      endpoint:
+      org:
+      space:
+
+    clusterName:

@@ -1,0 +1,30 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: serverinfo-config
+data:
+  config.json: |-
+    {
+      "Servers":[{"id":"PhysicalServer:10.19.1.4",
+               "relations": [
+                            {
+                              "id":"Node:169.38.98.35"
+                            },
+                            {
+                              "id": "Node:169.38.98.41"
+                            }
+               ]}],
+      "Applications":[{"id":"Application:FintechApplication",
+                      "relations": [
+                              {
+                                "id": "Service:fintechsolution"
+                              },
+                              {
+                                "id": "Service:aadharapi-service"
+                              },
+                              {
+                                "id": "Service:aggregation-service"
+                              }
+                      ]}]
+    }
+

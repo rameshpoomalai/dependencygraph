@@ -1,0 +1,132 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: cluster-insight-controller
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cluster-insight
+        version: v1
+    spec:
+      containers:
+        - name: cluster-insight
+          image:  "{{ .Values.image.repository }}/cluster-insight:{{ .Values.image.tag }}"
+          ports:
+            - name: cluster-insight
+              containerPort: 5555
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster-insight
+  namespace: default
+  labels:
+    app: cluster-insight
+    version: v1
+spec:
+  type: NodePort
+  selector:
+    app: cluster-insight
+    version: v1
+  ports:
+    - name: cluster-insight
+      port: 5555
+      targetPort: cluster-insight
+      nodePort: 30104
+---
+# Source: fintechsolution-chart/templates/deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dependencygraph
+  labels:
+    app: dependencygraph
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.service.externalPort }}
+      name: http
+      nodePort: 30105
+  # label keys and values that must match in order to receive traffic for this service
+  selector:
+    app: dependencygraph
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+  creationTimestamp: null
+  name: dependencygraph
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: dependencygraph
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+
+      labels:
+        app: dependencygraph
+        version: v1
+    spec:
+      containers:
+      - image:  "{{ .Values.image.repository }}/dependencygraph:{{ .Values.image.tag }}"
+        name: dependencygraph
+        volumeMounts:
+          - name: serverinfo-config
+            mountPath: /etc/serverinfo-config
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 0.2
+          requests:
+            cpu: 0.2
+      imagePullSecrets:
+      - name: registry-account
+      volumes:
+        - name: serverinfo-config
+          configMap:
+            name: serverinfo-config
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: serverinfo-config
+data:
+  config.json: |-
+    {
+      "Servers":[{"id":"PhysicalServer:10.19.1.4",
+               "relations": [
+                            {
+                              "id":"Node:169.38.98.35"
+                            },
+                            {
+                              "id": "Node:169.38.98.41"
+                            }
+               ]}],
+      "Applications":[{"id":"Application:FintechApplication",
+                      "relations": [
+                              {
+                                "id": "Service:fintechsolution"
+                              },
+                              {
+                                "id": "Service:aadharapi-service"
+                              },
+                              {
+                                "id": "Service:aggregation-service"
+                              }
+                      ]}]
+    }

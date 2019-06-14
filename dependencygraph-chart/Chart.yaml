@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Dependency Graph Tool
+name: dependencygraph-chart
+version: 0.1.0
